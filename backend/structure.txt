@@ -1,0 +1,12 @@
+backend/
+├── main.py              # Solo crea la app, monta routers y middleware
+├── routers/             # Controller: definición de rutas y qué hacen
+│   └── api.py           # p. ej. @router.get("/me")
+├── models/              # Model: representación de datos
+│   └── user.py          # Pydantic, schemas, o modelos de DB
+├── services/            # (Opcional) lógica de negocio que usan los routers
+│   └── auth.py
+├── core/                # (Opcional) config, dependencias (auth, DB)
+│   └── auth.py          # dependencia que verifica JWT
+├── requirements.txt
+└── .env

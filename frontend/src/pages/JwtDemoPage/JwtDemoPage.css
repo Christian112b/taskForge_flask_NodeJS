@@ -1,0 +1,198 @@
+.jwt-demo-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.5rem;
+  height: calc(100vh - 120px);
+  max-width: 100%;
+  padding: 4rem;
+  box-sizing: border-box;
+}
+
+.jwt-demo-page__card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  text-align: center;
+  overflow-y: auto;
+}
+
+/* Card 1: Como funciona JWT - ocupa toda la altura */
+.jwt-demo-page__card--flow {
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cards 2 y 3: 40% y 60% */
+.jwt-demo-page__card--structure {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.jwt-demo-page__card--code {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.jwt-demo-page__title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.jwt-demo-page__subtitle {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 1.5rem 0;
+}
+
+.jwt-demo-page__card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+/* Pasos del flujo */
+.jwt-demo-page__flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.jwt-demo-page__step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.jwt-demo-page__step:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.jwt-demo-page__step--active {
+  border-color: #667eea;
+  background: #e8eeff;
+}
+
+.jwt-demo-page__step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.jwt-demo-page__step-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.jwt-demo-page__step-arrow {
+  text-align: center;
+  color: #999;
+  font-size: 0.7rem;
+  padding: 0.1rem 0;
+}
+
+.jwt-demo-page__step-description {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-top: auto;
+  text-align: left;
+}
+
+/* Token estructura */
+.jwt-demo-page__token-demo {
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.jwt-demo-page__token-code {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+}
+
+.jwt-demo-page__token-part {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin: 0 4px;
+}
+
+.jwt-demo-page__token-part:nth-child(1) { background: #ff6b6b; color: white; }
+.jwt-demo-page__token-part:nth-child(2) { background: #4ecdc4; color: white; }
+.jwt-demo-page__token-part:nth-child(3) { background: #45b7d1; color: white; }
+
+.jwt-demo-page__token-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.jwt-demo-page__token-section {
+  padding: 0.6rem;
+  background: #f9f9f9;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.jwt-demo-page__token-label {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.jwt-demo-page__token-label--header { background: #ff6b6b; color: white; }
+.jwt-demo-page__token-label--payload { background: #4ecdc4; color: white; }
+.jwt-demo-page__token-label--signature { background: #45b7d1; color: white; }
+
+.jwt-demo-page__token-text {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Codigo - alineado a la izquierda con tabulaciones */
+.jwt-demo-page__code-block {
+  background: #282c34;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: #98c379;
+  line-height: 1.5;
+  margin: 0;
+  overflow-x: auto;
+  text-align: left;
+  white-space: pre;
+}

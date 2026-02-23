@@ -1,0 +1,127 @@
+.main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+}
+
+.main-layout__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.main-layout__nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.main-layout__logo {
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.main-layout__links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.main-layout__link {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  color: #525252;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.main-layout__link:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.main-layout__link--active {
+  background: #e8eeff;
+  color: #667eea;
+}
+
+/* User Menu Dropdown */
+.main-layout__user-menu {
+  position: relative;
+}
+
+.main-layout__user-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  color: #525252;
+  background: transparent;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.main-layout__user-btn:hover {
+  background: #f5f5f5;
+  border-color: #a3a3a3;
+}
+
+.main-layout__dropdown-arrow {
+  font-size: 0.6rem;
+  color: #888;
+}
+
+.main-layout__dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.25rem;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.main-layout__dropdown-email {
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  color: #666;
+  border-bottom: 1px solid #f0f0f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.main-layout__dropdown-logout {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.main-layout__dropdown-logout:hover {
+  background: #fef2f2;
+}
+
+.main-layout__content {
+  flex: 1;
+  padding: 1.5rem;
+}
