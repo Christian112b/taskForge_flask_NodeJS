@@ -24,7 +24,7 @@ class SupabaseClient:
             'Content-Type': 'application/json'
         }
     
-    def select(self, table: str, filters: dict = None, select: str = '*'):
+    def select(self, table: str, filters: dict = None, select: str = '*', user_token: str = None):
         """
         Obtiene registros de una tabla
         
@@ -32,6 +32,7 @@ class SupabaseClient:
             table: Nombre de la tabla
             filters: Diccionario de filtros {columna: valor}
             select: Columnas a seleccionar
+            user_token: Token JWT del usuario (para RLS)
             
         Returns:
             Lista de registros
@@ -42,33 +43,46 @@ class SupabaseClient:
             for column, value in filters.items():
                 url += f"&{column}=eq.{value}"
         
-        response = requests.get(url, headers=self._get_anon_headers())
+        headers = self._get_anon_headers()
+        if user_token:
+            headers['Authorization'] = f'Bearer {user_token}'
+        
+        response = requests.get(url, headers=headers)
         
         if response.status_code == 200:
             return response.json()
         else:
             raise Exception(f"Error fetching from Supabase: {response.text}")
     
-    def insert(self, table: str, data: dict):
+    def insert(self, table: str, data: dict, user_token: str = None):
         """
         Inserta un registro en una tabla
         
         Args:
             table: Nombre de la tabla
             data: Diccionario con los datos
+            user_token: Token JWT del usuario (para RLS)
             
         Returns:
             Registro insertado
         """
         url = f"{self.url}/rest/v1/{table}"
-        response = requests.post(url, json=data, headers=self.headers)
+        headers = self._get_anon_headers()
+        if user_token:
+            headers['Authorization'] = f'Bearer {user_token}'
+        
+        response = requests.post(url, json=data, headers=headers)
         
         if response.status_code in [200, 201]:
-            return response.json()
+            # Si la respuesta está vacía, retornar los datos enviados
+            if response.text:
+                return response.json()
+            else:
+                return data  # Retornar los datos que se insertaron
         else:
             raise Exception(f"Error inserting into Supabase: {response.text}")
     
-    def update(self, table: str, filters: dict, data: dict):
+    def update(self, table: str, filters: dict, data: dict, user_token: str = None):
         """
         Actualiza registros en una tabla
         
@@ -76,6 +90,7 @@ class SupabaseClient:
             table: Nombre de la tabla
             filters: Diccionario de filtros {columna: valor}
             data: Diccionario con los datos a actualizar
+            user_token: Token JWT del usuario (para RLS)
             
         Returns:
             Registros actualizados
@@ -86,20 +101,25 @@ class SupabaseClient:
         filter_parts = [f"{col}=eq.{val}" for col, val in filters.items()]
         url += "?" + "&".join(filter_parts)
         
-        response = requests.patch(url, json=data, headers=self.headers)
+        headers = self._get_anon_headers()
+        if user_token:
+            headers['Authorization'] = f'Bearer {user_token}'
+        
+        response = requests.patch(url, json=data, headers=headers)
         
         if response.status_code == 200:
             return response.json()
         else:
             raise Exception(f"Error updating Supabase: {response.text}")
     
-    def delete(self, table: str, filters: dict):
+    def delete(self, table: str, filters: dict, user_token: str = None):
         """
         Elimina registros de una tabla
         
         Args:
             table: Nombre de la tabla
             filters: Diccionario de filtros {columna: valor}
+            user_token: Token JWT del usuario (para RLS)
             
         Returns:
             Respuesta de Supabase
@@ -110,12 +130,44 @@ class SupabaseClient:
         filter_parts = [f"{col}=eq.{val}" for col, val in filters.items()]
         url += "?" + "&".join(filter_parts)
         
-        response = requests.delete(url, headers=self.headers)
+        headers = self._get_anon_headers()
+        if user_token:
+            headers['Authorization'] = f'Bearer {user_token}'
+        
+        response = requests.delete(url, headers=headers)
         
         if response.status_code in [200, 204]:
             return True
         else:
             raise Exception(f"Error deleting from Supabase: {response.text}")
+    
+    def verify_token(self, token: str) -> dict | None:
+        """
+        Verifica un token JWT de Supabase y obtiene información del usuario
+        
+        Args:
+            token: Token JWT de Supabase
+            
+        Returns:
+            Diccionario con info del usuario o None si es inválido
+        """
+        try:
+            # Usar la API de auth de Supabase para verificar el token
+            url = f"{self.url}/auth/v1/user"
+            headers = {
+                'apikey': self.anon_key,
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+            
+            response = requests.get(url, headers=headers)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return None
+        except Exception:
+            return None
 
 
 # Instancia global del cliente

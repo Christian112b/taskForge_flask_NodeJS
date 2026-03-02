@@ -1,8 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from controllers.auth_controller import AuthController
 
 # Blueprint para las rutas de autenticación
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
+
+# Nombre de la cookie
+TOKEN_COOKIE_NAME = 'auth_token'
 
 
 @auth_bp.route('/register', methods=['POST'])
@@ -21,6 +24,28 @@ def register():
     """
     data = request.get_json()
     response, status_code = AuthController.register(data)
+    
+    # Si el registro es exitoso, establecer cookie HttpOnly
+    if status_code == 201:
+        token = response.get('token')
+        if token:
+            # Crear respuesta con cookie segura
+            resp = make_response(jsonify({
+                'user': response.get('user'),
+                'message': response.get('message')
+            }), status_code)
+            
+            # Configurar cookie HttpOnly (no accesible desde JS)
+            resp.set_cookie(
+                TOKEN_COOKIE_NAME,
+                token,
+                httponly=True,
+                secure=False,  # True en producción con HTTPS
+                samesite='Lax',
+                max_age=60 * 60 * 24 * 7  # 7 días
+            )
+            return resp
+    
     return jsonify(response), status_code
 
 
@@ -34,13 +59,35 @@ def login():
         - password: Contraseña
         
     Returns:
-        - 200: Inicio de sesión exitoso
+        - 200: Inicio de sesión exitoso (token en cookie HttpOnly)
         - 400: Error de validación
         - 401: Credenciales incorrectas
     """
 
     data = request.get_json()
     response, status_code = AuthController.login(data)
+    
+    # Si el login es exitoso, establecer cookie HttpOnly
+    if status_code == 200:
+        token = response.get('token')
+        if token:
+            # Crear respuesta con cookie segura
+            resp = make_response(jsonify({
+                'user': response.get('user'),
+                'message': 'Login exitoso'
+            }), status_code)
+            
+            # Configurar cookie HttpOnly (no accesible desde JS)
+            resp.set_cookie(
+                TOKEN_COOKIE_NAME,
+                token,
+                httponly=True,
+                secure=False,  # True en producción con HTTPS
+                samesite='Lax',
+                max_age=60 * 60 * 24 * 7  # 7 días
+            )
+            return resp
+    
     return jsonify(response), status_code
 
 
@@ -90,6 +137,7 @@ def logout():
     Returns:
         - 200: Sesión cerrada exitosamente
     """
-    # En una implementación con JWT, el logout se maneja del lado del cliente
-    # eliminando el token. Aquí solo confirmamos.
-    return jsonify({'message': 'Sesión cerrada exitosamente'}), 200
+    # Eliminar la cookie
+    resp = make_response(jsonify({'message': 'Sesión cerrada exitosamente'}), 200)
+    resp.set_cookie(TOKEN_COOKIE_NAME, '', expires=0, httponly=True)
+    return resp

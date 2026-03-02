@@ -1,6 +1,7 @@
 // API client para comunicarse con Flask
+// Usa proxy y token de Supabase
 
-const API_URL = 'http://localhost:8000/api/auth';
+const API_URL = '/api';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
@@ -9,11 +10,19 @@ class ApiError extends Error {
   }
 }
 
+// Función para obtener el token de Supabase
+async function getSupabaseToken(): Promise<string | null> {
+  const { supabase } = await import('./supabase')
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token || null
+}
+
 async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = localStorage.getItem('auth_token');
+  // Obtener token de Supabase
+  const token = await getSupabaseToken()
   
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -24,6 +33,7 @@ async function fetchApi<T>(
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers,
+    credentials: 'include',
   });
 
   const data = await response.json();
@@ -35,32 +45,19 @@ async function fetchApi<T>(
   return data;
 }
 
-// Funciones de autenticación
+// Funciones de autenticación (ya no se usan, login es directo con Supabase)
 export const authApi = {
-  register: (email: string, password: string, confirmPassword: string) =>
-    fetchApi<{ message: string; user: { id: string; email: string }; token: string }>(
-      '/register',
-      {
-        method: 'POST',
-        body: JSON.stringify({ email, password, confirmPassword }),
-      }
-    ),
-
-  login: (email: string, password: string) =>
-    fetchApi<{ user: { id: string; email: string }; token: string }>('/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    }),
-
-  getCurrentUser: () =>
-    fetchApi<{ id: string; email: string; created_at: string }>('/me', {
-      method: 'GET',
-    }),
-
-  logout: () =>
-    fetchApi<{ message: string }>('/logout', {
-      method: 'POST',
-    }),
+  // getCurrentUser ya no es necesario con Supabase
+  getCurrentUser: async () => {
+    const token = await getSupabaseToken()
+    if (!token) throw new Error('No hay sesión')
+    return { id: '', email: '' } // El backend obtendrá el usuario del token
+  },
+  
+  logout: async () => {
+    const { supabase } = await import('./supabase')
+    await supabase.auth.signOut()
+  }
 };
 
 export { ApiError };

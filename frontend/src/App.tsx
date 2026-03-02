@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import GuestRoute from './components/GuestRoute'
 import JwtDemoPage from './pages/JwtDemoPage'
+import ProjectsPage from './pages/ProjectsPage'
 import './App.css'
 
 function App(): JSX.Element {
@@ -33,6 +34,14 @@ function App(): JSX.Element {
           element={
             <ProtectedRoute>
               <JwtDemoPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectsPage />
             </ProtectedRoute>
           }
         />

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type JSX, type ReactNode } from 'react'
 import { authApi } from '../lib/api'
+import { supabase } from '../lib/supabase'
 
 interface AuthContextValue {
   isAuthenticated: boolean
@@ -17,59 +18,73 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   const [user, setUser] = useState<{ id: string; email: string } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Verificar si hay un token al cargar la app
+  // Verificar si hay sesión de Supabase al cargar la app
   useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-    
-    if (token) {
-      // Verificar el token con el backend
-      authApi.getCurrentUser()
-        .then((userData) => {
-          setUser(userData)
-          setIsAuthenticated(true)
-        })
-        .catch(() => {
-          // Token inválido o expirado
-          localStorage.removeItem('auth_token')
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-    } else {
+    // Verificar sesión actual de Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({ id: session.user.id, email: session.user.email || '' })
+        setIsAuthenticated(true)
+      }
       setIsLoading(false)
-    }
+    })
+    
+    // Escuchar cambios en la sesión
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({ id: session.user.id, email: session.user.email || '' })
+        setIsAuthenticated(true)
+      } else {
+        setUser(null)
+        setIsAuthenticated(false)
+      }
+    })
+    
+    return () => subscription.unsubscribe()
   }, [])
 
   const login = useCallback(async (email: string, password: string): Promise<void> => {
-    const response = await authApi.login(email, password)
+    // Login directamente con Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
     
-    // Guardar token
-    localStorage.setItem('auth_token', response.token)
+    if (error) {
+      throw new Error(error.message)
+    }
     
-    // Guardar datos del usuario
-    setUser(response.user)
-    setIsAuthenticated(true)
+    // Guardar datos del usuario y token de Supabase
+    if (data.user) {
+      setUser({ id: data.user.id, email: data.user.email || '' })
+      setIsAuthenticated(true)
+    }
   }, [])
 
   const register = useCallback(async (email: string, password: string, confirmPassword: string): Promise<void> => {
-    const response = await authApi.register(email, password, confirmPassword)
+    // Registro directamente con Supabase
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password
+    })
     
-    // Guardar token
-    localStorage.setItem('auth_token', response.token)
+    if (error) {
+      throw new Error(error.message)
+    }
     
     // Guardar datos del usuario
-    setUser(response.user)
-    setIsAuthenticated(true)
+    if (data.user) {
+      setUser({ id: data.user.id, email: data.user.email || '' })
+      setIsAuthenticated(true)
+    }
   }, [])
 
   const logout = useCallback(async (): Promise<void> => {
     try {
-      await authApi.logout()
+      await supabase.auth.signOut()
     } catch {
       // Ignorar errores al cerrar sesión
     } finally {
-      // Limpiar estado
-      localStorage.removeItem('auth_token')
       setUser(null)
       setIsAuthenticated(false)
     }

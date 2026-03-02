@@ -1,0 +1,183 @@
+.projects-page {
+  padding: 1.5rem;
+}
+
+.projects-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.projects-page__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.projects-page__add-btn {
+  padding: 0.5rem 1rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.projects-page__add-btn:hover {
+  background: #5568d3;
+}
+
+/* Formulario */
+.projects-page__form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.projects-page__input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.projects-page__input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.projects-page__submit {
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.projects-page__submit:hover {
+  background: #059669;
+}
+
+.projects-page__error {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.projects-page__loading {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+}
+
+/* Kanban */
+.projects-page__kanban {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.projects-page__column {
+  background: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.projects-page__column-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  border-bottom: 3px solid;
+}
+
+.projects-page__column-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.projects-page__column-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.projects-page__column-count {
+  font-size: 0.8rem;
+  color: #666;
+  background: #eee;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+}
+
+.projects-page__column-content {
+  padding: 0.75rem;
+  min-height: 200px;
+}
+
+/* Tarjeta de proyecto */
+.projects-page__card {
+  background: white;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.projects-page__card-title {
+  font-size: 0.85rem;
+  color: #333;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.projects-page__card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.projects-page__move-select {
+  flex: 1;
+  padding: 0.25rem;
+  font-size: 0.7rem;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+.projects-page__delete-btn {
+  padding: 0.25rem 0.5rem;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.projects-page__delete-btn:hover {
+  background: #fecaca;
+}
+
+.projects-page__empty {
+  text-align: center;
+  color: #999;
+  font-size: 0.8rem;
+  padding: 1rem;
+}

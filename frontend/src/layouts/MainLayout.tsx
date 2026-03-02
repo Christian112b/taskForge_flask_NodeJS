@@ -27,6 +27,12 @@ export default function MainLayout({ children }: MainLayoutProps): JSX.Element {
                 Inicio
               </Link>
               <Link 
+                to="/projects" 
+                className={`main-layout__link ${location.pathname === '/projects' ? 'main-layout__link--active' : ''}`}
+              >
+                Proyectos
+              </Link>
+              <Link 
                 to="/jwt-demo" 
                 className={`main-layout__link ${location.pathname === '/jwt-demo' ? 'main-layout__link--active' : ''}`}
               >
