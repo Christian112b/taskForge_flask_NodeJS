@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type JSX } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import ConnectionStatus from '../../components/ConnectionStatus'
 import './LoginPage.css'
 
 type Tab = 'login' | 'register'
@@ -194,6 +195,7 @@ export default function LoginPage(): JSX.Element {
                 ¿Olvidaste tu contraseña?
           </Link>
         </p>
+        <ConnectionStatus apiUrl={import.meta.env.VITE_API_URL || undefined} />
       </div>
     </main>
   )

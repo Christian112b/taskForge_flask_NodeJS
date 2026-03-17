@@ -2,7 +2,9 @@
 // Usa proxy y token de Supabase
 
 // URL del API - usa variable de entorno en producción
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Si VITE_API_URL está configurada, la usa; si no, usa /api (desarrollo)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/api` : '/api';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
