@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, type JSX, Fragment } from 'react'
 import { createPortal } from 'react-dom'
+import ConnectionStatus from '../../components/ConnectionStatus'
 import {
   DndContext,
   closestCenter,
@@ -2023,6 +2024,7 @@ export default function ProjectsPage(): JSX.Element {
 
   return (
     <div className="projects-page">
+      <ConnectionStatus apiUrl={import.meta.env.VITE_API_URL || undefined} />
       <div className="projects-page__header">
         <div className="projects-page__header-left">
           <div className="projects-search">

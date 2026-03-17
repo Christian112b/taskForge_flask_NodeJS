@@ -7,6 +7,7 @@ interface ConnectionStatusProps {
 export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX.Element {
   const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [latency, setLatency] = useState<number | null>(null)
+  const [wakingUp, setWakingUp] = useState(false)
 
   // Determinar la URL del backend
   // En desarrollo: usa localhost:8000 (el proxy)
@@ -22,30 +23,30 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
     return window.location.origin
   }
 
-  useEffect(() => {
-    const checkConnection = async () => {
-      const backendUrl = getBackendUrl()
-      const startTime = Date.now()
+  const checkConnection = async () => {
+    const backendUrl = getBackendUrl()
+    const startTime = Date.now()
+    
+    try {
+      const response = await fetch(`${backendUrl}/health`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(5000)
+      })
       
-      try {
-        const response = await fetch(`${backendUrl}/health`, {
-          method: 'GET',
-          signal: AbortSignal.timeout(5000)
-        })
-        
-        const endTime = Date.now()
-        
-        if (response.ok) {
-          setStatus('online')
-          setLatency(endTime - startTime)
-        } else {
-          setStatus('offline')
-        }
-      } catch {
+      const endTime = Date.now()
+      
+      if (response.ok) {
+        setStatus('online')
+        setLatency(endTime - startTime)
+      } else {
         setStatus('offline')
       }
+    } catch {
+      setStatus('offline')
     }
+  }
 
+  useEffect(() => {
     checkConnection()
     
     // Check every 30 seconds
@@ -53,6 +54,30 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
     
     return () => clearInterval(interval)
   }, [apiUrl])
+
+  // Función para "despertar" el backend
+  const handleWakeUp = async () => {
+    setWakingUp(true)
+    const backendUrl = getBackendUrl()
+    
+    try {
+      // Hacer una petición al backend para despertarlo
+      await fetch(`${backendUrl}/health`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(30000) // Longer timeout para el primer request
+      })
+      // Verificar el estado después de intentar despertar
+      await checkConnection()
+    } catch {
+      // Si falla, el backend probablemente estaba dormido y necesita más tiempo
+      // Reintentar después de unos segundos
+      setTimeout(async () => {
+        await checkConnection()
+        setWakingUp(false)
+      }, 5000)
+    }
+    setWakingUp(false)
+  }
 
   const getStatusColor = () => {
     switch (status) {
@@ -70,15 +95,19 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
       case 'online':
         return latency ? `${latency}ms` : 'Online'
       case 'offline':
-        return 'Offline'
+        return wakingUp ? 'Despertando...' : 'Offline - Click para despertar'
       default:
         return 'Checking...'
     }
   }
 
   const handleClick = () => {
-    const backendUrl = getBackendUrl()
-    window.open(`${backendUrl}/health`, '_blank')
+    if (status === 'offline') {
+      handleWakeUp()
+    } else {
+      const backendUrl = getBackendUrl()
+      window.open(`${backendUrl}/health`, '_blank')
+    }
   }
 
   return (
@@ -102,7 +131,7 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
         zIndex: 100,
         backdropFilter: 'blur(4px)',
       }}
-      title="Click to see backend health status"
+      title={status === 'offline' ? 'Click para despertar el backend' : 'Click para ver estado del backend'}
     >
       <div style={{
         width: '8px',
