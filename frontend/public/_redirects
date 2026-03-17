@@ -1,4 +1,7 @@
-# SPA Fallback for React Router
-# All routes should serve index.html for client-side routing
-
+/login /login 200
+/forgot-password /forgot-password 200
+/reset-password /reset-password 200
+/projects /projects 200
+/docs /docs 200
+/jwt-demo /jwt-demo 200
 /* /index.html 200
