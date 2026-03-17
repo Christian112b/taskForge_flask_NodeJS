@@ -1,5 +1,9 @@
 import { supabase } from './supabase';
 
+// URL del API - usa variable de entorno en producción
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/api/project-stages` : '/api/project-stages';
+
 export interface ProjectStage {
   id: string;
   project_id: string;
@@ -28,7 +32,7 @@ async function fetchApi<T>(
     ...options.headers,
   };
 
-  const response = await fetch(`/api/project-stages${endpoint}`, {
+  const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers,
     credentials: 'include',

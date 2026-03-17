@@ -1,7 +1,9 @@
 // API client para proyectos
 // Usa el mismo proxy (/api -> localhost:8000)
 
-const API_URL = '/api/projects';
+// URL del API - usa variable de entorno en producción
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/api/projects` : '/api/projects';
 
 // Función para obtener el token de Supabase
 async function getSupabaseToken(): Promise<string | null> {

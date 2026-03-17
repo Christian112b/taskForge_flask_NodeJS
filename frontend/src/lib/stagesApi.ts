@@ -1,6 +1,8 @@
 // API client para stages
 
-const API_URL = '/api/stages';
+// URL del API - usa variable de entorno en producción
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/api/stages` : '/api/stages';
 
 // Función para obtener el token de Supabase
 async function getSupabaseToken(): Promise<string | null> {
