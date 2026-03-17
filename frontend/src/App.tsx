@@ -1,5 +1,5 @@
 import type { JSX } from 'react'
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -127,6 +127,13 @@ function App(): JSX.Element {
             path="/docs"
             element={
               <DocsPage />
+            }
+          />
+          {/* Catch-all route for unknown paths - redirects to / based on auth state */}
+          <Route
+            path="*"
+            element={
+              <Navigate to="/" replace />
             }
           />
         </Routes>
