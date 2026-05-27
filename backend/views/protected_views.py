@@ -1,12 +1,15 @@
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter
+
 from middleware.auth_middleware import jwt_required
 from services.supabase_client import supabase_client
 
-# Blueprint para rutas protegidas
-protected_bp = Blueprint('protected', __name__, url_prefix='/api')
+# Router para rutas protegidas
+router = APIRouter(
+    prefix="/api",
+    tags=["protected"]
+)
 
-
-@protected_bp.route('/profile', methods=['GET'])
+@router.get('/profile')
 @jwt_required
 def get_profile():
     """
@@ -38,7 +41,7 @@ def get_profile():
         return jsonify({'error': f'Error al obtener perfil: {str(e)}'}), 500
 
 
-@protected_bp.route('/profile', methods=['PUT'])
+@router.put('/profile')
 @jwt_required
 def update_profile():
     """
@@ -74,7 +77,7 @@ def update_profile():
         return jsonify({'error': f'Error al actualizar perfil: {str(e)}'}), 500
 
 
-@protected_bp.route('/data', methods=['GET'])
+@router.get('/data')
 @jwt_required
 def get_user_data():
     """
@@ -98,7 +101,7 @@ def get_user_data():
     }), 200
 
 
-@protected_bp.route('/health-check', methods=['GET'])
+@router.get('/health-check')
 @jwt_required
 def health_check():
     """

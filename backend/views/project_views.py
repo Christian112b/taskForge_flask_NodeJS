@@ -1,3 +1,5 @@
+from fastapi import APIRouter
+
 from flask import Blueprint, request, jsonify
 from middleware.auth_middleware import jwt_required
 from controllers.project_controller import ProjectController
@@ -5,8 +7,13 @@ from controllers.project_controller import ProjectController
 # Blueprint para proyectos
 projects_bp = Blueprint('projects', __name__, url_prefix='/api/projects')
 
+router = APIRouter(
+    prefix="/api/projects",
+    tags=["projects"]
+)
 
-@projects_bp.route('', methods=['GET'])
+
+@router.get('')
 @jwt_required
 def get_projects():
     """Obtiene todos los proyectos del usuario"""
@@ -16,7 +23,7 @@ def get_projects():
     return jsonify(projects), status_code
 
 
-@projects_bp.route('', methods=['POST'])
+@router.post('')
 @jwt_required
 def create_project():
 
@@ -31,7 +38,7 @@ def create_project():
     return jsonify(response), status_code
 
 
-@projects_bp.route('/<project_id>', methods=['GET'])
+@router.get('/<project_id>')
 @jwt_required
 def get_project(project_id):
     """Obtiene un proyecto por ID"""
@@ -41,7 +48,7 @@ def get_project(project_id):
     return jsonify(response), status_code
 
 
-@projects_bp.route('/<project_id>', methods=['PUT'])
+@router.put('/<project_id>')
 @jwt_required
 def update_project(project_id):
     """Actualiza un proyecto"""
@@ -53,7 +60,7 @@ def update_project(project_id):
     return jsonify(response), status_code
 
 
-@projects_bp.route('/<project_id>', methods=['DELETE'])
+@router.delete('/<project_id>')
 @jwt_required
 def delete_project(project_id):
     """Elimina un proyecto"""
@@ -65,7 +72,7 @@ def delete_project(project_id):
 
 # ========== ETAPAS ==========
 
-@projects_bp.route('/stages', methods=['GET'])
+@router.get('/stages')
 @jwt_required
 def get_stages():
     """Obtiene todas las etapas"""
@@ -75,7 +82,7 @@ def get_stages():
 
 # ========== KANBAN ==========
 
-@projects_bp.route('/kanban', methods=['GET'])
+@router.get('/kanban')
 @jwt_required
 def get_kanban():
     """Obtiene el tablero Kanban"""
@@ -87,7 +94,7 @@ def get_kanban():
     return jsonify(kanban), status_code
 
 
-@projects_bp.route('/<project_id>/move', methods=['PUT'])
+@router.put('/<project_id>/move')
 @jwt_required
 def move_project(project_id):
     """Mueve un proyecto a otra etapa"""
@@ -107,7 +114,7 @@ def move_project(project_id):
 
 # ========== ENDPOINT UNIFICADO ==========
 
-@projects_bp.route('/<project_id>/full', methods=['GET'])
+@router.get('/<project_id>/full')
 @jwt_required
 def get_project_full(project_id):
     """Obtiene un proyecto con sus etapas, tareas y categorías en una sola llamada"""

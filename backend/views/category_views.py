@@ -1,12 +1,17 @@
 # Category Views
+from fastapi import APIRouter
+
 from flask import Blueprint, request, jsonify
 from middleware.auth_middleware import jwt_required
 from controllers import category_controller
 from models.category import CategoryCreate, CategoryUpdate
 
-category_bp = Blueprint('categories', __name__, url_prefix='/api/categories')
+router = APIRouter(
+    prefix="/api/categories",
+    tags=["categories"]
+)
 
-@category_bp.route('', methods=['GET'])
+@router.get('')
 @jwt_required
 def get_categories():
     """Obtener todas las categorías"""
@@ -14,7 +19,7 @@ def get_categories():
     categories = category_controller.get_categories(user_id)
     return jsonify(categories)
 
-@category_bp.route('/<category_id>', methods=['GET'])
+@router.get('/<category_id>')
 @jwt_required
 def get_category(category_id):
     """Obtener una categoría por ID"""
@@ -24,7 +29,7 @@ def get_category(category_id):
         return jsonify(category)
     return jsonify({'error': 'Categoría no encontrada'}), 404
 
-@category_bp.route('', methods=['POST'])
+@router.post('')
 @jwt_required
 def create_category():
     """Crear una nueva categoría"""
@@ -47,7 +52,7 @@ def create_category():
         return jsonify(result), 201
     return jsonify({'error': 'Error al crear categoría'}), 500
 
-@category_bp.route('/<category_id>', methods=['PUT'])
+@router.put('/<category_id>')
 @jwt_required
 def update_category(category_id):
     """Actualizar una categoría"""
@@ -66,7 +71,7 @@ def update_category(category_id):
         return jsonify(result)
     return jsonify({'error': 'Categoría no encontrada'}), 404
 
-@category_bp.route('/<category_id>', methods=['DELETE'])
+@router.delete('/<category_id>')
 @jwt_required
 def delete_category(category_id):
     """Eliminar una categoría"""

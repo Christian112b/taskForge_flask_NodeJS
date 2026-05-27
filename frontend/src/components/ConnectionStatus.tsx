@@ -2,9 +2,10 @@ import { useState, useEffect, type JSX } from 'react'
 
 interface ConnectionStatusProps {
   apiUrl?: string
+  position?: 'top-right' | 'top-left'
 }
 
-export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX.Element {
+export default function ConnectionStatus({ apiUrl, position = 'top-right' }: ConnectionStatusProps): JSX.Element {
   const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [latency, setLatency] = useState<number | null>(null)
   const [wakingUp, setWakingUp] = useState(false)
@@ -115,8 +116,9 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
       onClick={handleClick}
       style={{
         position: 'fixed',
-        top: '80px', // Debajo de la navbar (aproximadamente 64px + padding)
-        right: '16px',
+        top: position === 'top-right' ? '80px' : '80px',
+        right: position === 'top-right' ? '16px' : 'auto',
+        left: position === 'top-left' ? '16px' : 'auto',
         display: 'flex',
         alignItems: 'center',
         gap: '8px',

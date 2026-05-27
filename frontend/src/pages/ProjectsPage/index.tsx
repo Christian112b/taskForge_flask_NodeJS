@@ -2024,7 +2024,7 @@ export default function ProjectsPage(): JSX.Element {
 
   return (
     <div className="projects-page">
-      <ConnectionStatus apiUrl={import.meta.env.VITE_API_URL || undefined} />
+      <ConnectionStatus apiUrl={import.meta.env.VITE_API_URL || undefined} position="top-left" />
       <div className="projects-page__header">
         <div className="projects-page__header-left">
           <div className="projects-search">

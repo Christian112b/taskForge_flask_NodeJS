@@ -1,12 +1,17 @@
 # Subtask Views
+from fastapi import APIRouter
+
 from flask import Blueprint, request, jsonify
 from middleware.auth_middleware import jwt_required
 from controllers import subtask_controller
 from models.subtask import SubtaskCreate, SubtaskUpdate
 
-subtask_bp = Blueprint('subtasks', __name__, url_prefix='/api/subtasks')
+router = APIRouter(
+    prefix="/api/subtasks",
+    tags=["subtasks"]
+)
 
-@subtask_bp.route('/project/<project_id>', methods=['GET'])
+@router.get('/project/<project_id>')
 @jwt_required
 def get_subtasks(project_id):
     """Obtener todas las subtareas de un proyecto"""
@@ -14,7 +19,7 @@ def get_subtasks(project_id):
     subtasks = subtask_controller.get_subtasks_by_project(project_id, user_id)
     return jsonify(subtasks)
 
-@subtask_bp.route('', methods=['POST'])
+@router.post('')
 @jwt_required
 def create_subtask():
     """Crear una nueva subtarea"""
@@ -39,7 +44,7 @@ def create_subtask():
         return jsonify(result), 201
     return jsonify({'error': 'Error al crear subtarea'}), 500
 
-@subtask_bp.route('/<subtask_id>', methods=['PUT'])
+@router.put('/<subtask_id>')
 @jwt_required
 def update_subtask(subtask_id):
     """Actualizar una subtarea"""
@@ -59,7 +64,7 @@ def update_subtask(subtask_id):
         return jsonify(result)
     return jsonify({'error': 'Subtarea no encontrada'}), 404
 
-@subtask_bp.route('/<subtask_id>', methods=['DELETE'])
+@router.delete('/<subtask_id>')
 @jwt_required
 def delete_subtask(subtask_id):
     """Eliminar una subtarea"""
