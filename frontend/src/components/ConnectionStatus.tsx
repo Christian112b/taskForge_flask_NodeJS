@@ -2,9 +2,10 @@ import { useState, useEffect, type JSX } from 'react'
 
 interface ConnectionStatusProps {
   apiUrl?: string
+  position?: 'top-right' | 'top-left'
 }
 
-export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX.Element {
+export default function ConnectionStatus({ apiUrl, position = 'top-right' }: ConnectionStatusProps): JSX.Element {
   const [status, setStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [latency, setLatency] = useState<number | null>(null)
   const [wakingUp, setWakingUp] = useState(false)
@@ -12,29 +13,33 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
   // Determinar la URL del backend
   // En desarrollo: usa localhost:8000 (el proxy)
   // En producción: usa la variable VITE_API_URL
+
+
   const getBackendUrl = (): string => {
     if (apiUrl) {
       return apiUrl
     }
-    // En desarrollo, el proxy está en /api, pero el backend real está en localhost:8000
+
     if (import.meta.env.DEV) {
       return 'http://localhost:8000'
     }
+
     return window.location.origin
   }
+
 
   const checkConnection = async () => {
     const backendUrl = getBackendUrl()
     const startTime = Date.now()
-    
+
     try {
       const response = await fetch(`${backendUrl}/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000)
       })
-      
+
       const endTime = Date.now()
-      
+
       if (response.ok) {
         setStatus('online')
         setLatency(endTime - startTime)
@@ -48,10 +53,10 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
 
   useEffect(() => {
     checkConnection()
-    
+
     // Check every 30 seconds
     const interval = setInterval(checkConnection, 30000)
-    
+
     return () => clearInterval(interval)
   }, [apiUrl])
 
@@ -59,7 +64,7 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
   const handleWakeUp = async () => {
     setWakingUp(true)
     const backendUrl = getBackendUrl()
-    
+
     try {
       // Hacer una petición al backend para despertarlo
       await fetch(`${backendUrl}/health`, {
@@ -115,8 +120,9 @@ export default function ConnectionStatus({ apiUrl }: ConnectionStatusProps): JSX
       onClick={handleClick}
       style={{
         position: 'fixed',
-        top: '80px', // Debajo de la navbar (aproximadamente 64px + padding)
-        right: '16px',
+        top: position === 'top-right' ? '80px' : '80px',
+        right: position === 'top-right' ? '16px' : 'auto',
+        left: position === 'top-left' ? '16px' : 'auto',
         display: 'flex',
         alignItems: 'center',
         gap: '8px',

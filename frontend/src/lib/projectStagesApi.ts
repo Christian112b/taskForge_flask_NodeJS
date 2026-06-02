@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 
 // URL del API - usa variable de entorno en producción
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-const API_URL = API_BASE_URL ? `${API_BASE_URL}/api/project-stages` : '/api/project-stages';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/project-stages` : '/project-stages';
 
 export interface ProjectStage {
   id: string;
@@ -53,9 +53,18 @@ export const projectStagesApi = {
   },
 
   create: async (projectId: string, stage: Omit<ProjectStage, 'id' | 'project_id' | 'created_at'>): Promise<ProjectStage> => {
+
+    console.log('Creating stage for project:', projectId, stage);
+
     return fetchApi<ProjectStage>(`/project/${projectId}`, {
       method: 'POST',
-      body: JSON.stringify(stage)
+      body: JSON.stringify({
+      project_id: projectId,
+      stage_id: stage.stage_id,     
+      stage_name: stage.stage_name,
+      stage_color: stage.stage_color,
+      stage_order: stage.stage_order
+    })
     });
   },
 

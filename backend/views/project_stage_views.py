@@ -1,12 +1,16 @@
 # Project Stage Views
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter
+
 from middleware.auth_middleware import jwt_required
 from controllers import project_stage_controller
 from models.project_stage import ProjectStageCreate, ProjectStageUpdate
 
-project_stage_bp = Blueprint('project_stages', __name__, url_prefix='/api/project-stages')
+router = APIRouter(
+    prefix="/api/project-stages",
+    tags=["project_stages"]
+)
 
-@project_stage_bp.route('/project/<project_id>', methods=['GET'])
+@router.get('/project/<project_id>')
 @jwt_required
 def get_project_stages(project_id):
     """Obtener todas las etapas de un proyecto"""
@@ -14,7 +18,7 @@ def get_project_stages(project_id):
     stages = project_stage_controller.get_project_stages(project_id, user_id)
     return jsonify(stages)
 
-@project_stage_bp.route('/project/<project_id>', methods=['POST'])
+@router.post('/project/<project_id>')
 @jwt_required
 def create_project_stage(project_id):
     """Crear una nueva etapa de proyecto"""
@@ -39,7 +43,7 @@ def create_project_stage(project_id):
         return jsonify(result), 201
     return jsonify({'error': 'Error al crear etapa de proyecto'}), 500
 
-@project_stage_bp.route('/<project_stage_id>', methods=['PUT'])
+@router.put('/<project_stage_id>')
 @jwt_required
 def update_project_stage(project_stage_id):
     """Actualizar una etapa de proyecto"""
@@ -58,7 +62,7 @@ def update_project_stage(project_stage_id):
         return jsonify(result)
     return jsonify({'error': 'Etapa de proyecto no encontrada'}), 404
 
-@project_stage_bp.route('/<project_stage_id>', methods=['DELETE'])
+@router.delete('/<project_stage_id>')
 @jwt_required
 def delete_project_stage(project_stage_id):
     """Eliminar una etapa de proyecto"""
@@ -69,7 +73,7 @@ def delete_project_stage(project_stage_id):
         return jsonify({'message': 'Etapa de proyecto eliminada'})
     return jsonify({'error': 'Etapa de proyecto no encontrada'}), 404
 
-@project_stage_bp.route('/project/<project_id>/initialize', methods=['POST'])
+@router.post('/project/<project_id>/initialize')
 @jwt_required
 def initialize_project_stages(project_id):
     """Inicializar etapas por defecto para un proyecto"""

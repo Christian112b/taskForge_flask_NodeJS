@@ -1,86 +1,42 @@
-from flask import Flask
-from flask_cors import CORS
-from views.auth_views import auth_bp
-from views.protected_views import protected_bp
-from views.project_views import projects_bp
-from views.subtask_views import subtask_bp
-from views.stage_views import stage_bp
-from views.category_views import category_bp
-from views.project_stage_views import project_stage_bp
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+# Importa tus routers (antes eran blueprints en Flask)
+from views.auth_views import router as auth_router
+from views.protected_views import router as protected_router
+from views.project_views import router as projects_router
+from views.subtask_views import router as subtask_router
+from views.stage_views import router as stage_router
+from views.category_views import router as category_router
+from views.project_stage_views import router as project_stage_router
 from config import Config
 
+app = FastAPI()
 
-def create_app():
-    """Crea y configura la aplicación Flask"""
-    
-    app = Flask(__name__)
-    
-    # Habilitar CORS para permitir solicitudes desde el frontend
-    # Lee los orígenes desde la variable de entorno CORS_ORIGINS
-    CORS(app, 
-         origins=Config.CORS_ORIGINS,
-         supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-    
-    # Registrar blueprints (rutas)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(protected_bp)
-    app.register_blueprint(projects_bp)
-    app.register_blueprint(subtask_bp)
-    app.register_blueprint(stage_bp)
-    app.register_blueprint(category_bp)
-    app.register_blueprint(project_stage_bp)
-    
-    # Ruta raíz
-    @app.route('/')
-    def index():
-        return {
-            'message': 'API de Flask - MVC Pattern',
-            'version': '1.0.0',
-            'endpoints': {
-                'auth': {
-                    'register': 'POST /api/auth/register',
-                    'login': 'POST /api/auth/login',
-                    'me': 'GET /api/auth/me',
-                    'logout': 'POST /api/auth/logout'
-                },
-                'projects': {
-                    'list': 'GET /api/projects',
-                    'create': 'POST /api/projects',
-                    'get': 'GET /api/projects/<id>',
-                    'update': 'PUT /api/projects/<id>',
-                    'delete': 'DELETE /api/projects/<id>',
-                    'kanban': 'GET /api/projects/kanban',
-                    'move': 'PUT /api/projects/<id>/move'
-                },
-                'categories': {
-                    'list': 'GET /api/categories',
-                    'create': 'POST /api/categories',
-                    'update': 'PUT /api/categories/<id>',
-                    'delete': 'DELETE /api/categories/<id>'
-                },
-                'project_stages': {
-                    'list': 'GET /api/project-stages/project/<id>',
-                    'create': 'POST /api/project-stages/project/<id>',
-                    'update': 'PUT /api/project-stages/<id>',
-                    'delete': 'DELETE /api/project-stages/<id>',
-                    'initialize': 'POST /api/project-stages/project/<id>/initialize'
-                }
-            }
-        }
-    
-    # Ruta de health check
-    @app.route('/health')
-    def health():
-        return {'status': 'healthy'}
-    
-    return app
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=Config.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
+)
 
+# Registrar routers (antes blueprints)
+app.include_router(auth_router)
+app.include_router(protected_router)
+app.include_router(projects_router)
+app.include_router(subtask_router)
+app.include_router(stage_router)
+app.include_router(category_router)
+app.include_router(project_stage_router)
 
-# Crear la aplicación
-app = create_app()
+# Ruta raíz
+@app.get("/")
+def index():
+    return {"status": "root"}
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+# Ruta de health check
+@app.get("/health")
+def health():
+    return {"status": "healthy"}

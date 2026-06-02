@@ -2,7 +2,7 @@
 
 // URL del API - usa variable de entorno en producción
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
-const API_URL = API_BASE_URL ? `${API_BASE_URL}/api/subtasks` : '/api/subtasks';
+const API_URL = API_BASE_URL ? `${API_BASE_URL}/subtasks` : '/subtasks';
 
 // Función para obtener el token de Supabase
 async function getSupabaseToken(): Promise<string | null> {
