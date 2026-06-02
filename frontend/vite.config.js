@@ -41,8 +41,5 @@ export default defineConfig(({ mode }) => ({
   },
   // Variables de entorno
   envPrefix: ['VITE_', 'PUBLIC_'],
-  define: {
-    // Hacer disponible la URL del API en tiempo de build
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || ''),
-  },
+
 }))

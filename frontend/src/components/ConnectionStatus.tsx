@@ -13,29 +13,33 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
   // Determinar la URL del backend
   // En desarrollo: usa localhost:8000 (el proxy)
   // En producción: usa la variable VITE_API_URL
+
+
   const getBackendUrl = (): string => {
     if (apiUrl) {
       return apiUrl
     }
-    // En desarrollo, el proxy está en /api, pero el backend real está en localhost:8000
+
     if (import.meta.env.DEV) {
       return 'http://localhost:8000'
     }
+
     return window.location.origin
   }
+
 
   const checkConnection = async () => {
     const backendUrl = getBackendUrl()
     const startTime = Date.now()
-    
+
     try {
       const response = await fetch(`${backendUrl}/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000)
       })
-      
+
       const endTime = Date.now()
-      
+
       if (response.ok) {
         setStatus('online')
         setLatency(endTime - startTime)
@@ -49,10 +53,10 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
 
   useEffect(() => {
     checkConnection()
-    
+
     // Check every 30 seconds
     const interval = setInterval(checkConnection, 30000)
-    
+
     return () => clearInterval(interval)
   }, [apiUrl])
 
@@ -60,7 +64,7 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
   const handleWakeUp = async () => {
     setWakingUp(true)
     const backendUrl = getBackendUrl()
-    
+
     try {
       // Hacer una petición al backend para despertarlo
       await fetch(`${backendUrl}/health`, {
