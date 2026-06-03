@@ -33,7 +33,7 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
     const startTime = Date.now()
 
     try {
-      const response = await fetch(`${backendUrl}/api/taskforge/health`, {
+      const response = await fetch(`${backendUrl}/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000)
       })
@@ -67,7 +67,7 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
 
     try {
       // Hacer una petición al backend para despertarlo
-      await fetch(`${backendUrl}/api/taskforge/health`, {
+      await fetch(`${backendUrl}/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(30000) // Longer timeout para el primer request
       })
@@ -111,7 +111,7 @@ export default function ConnectionStatus({ apiUrl, position = 'top-right' }: Con
       handleWakeUp()
     } else {
       const backendUrl = getBackendUrl()
-      window.open(`${backendUrl}/api/taskforge/health`, '_blank')
+      window.open(`${backendUrl}/health`, '_blank')
     }
   }
 
